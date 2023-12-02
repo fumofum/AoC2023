@@ -39,19 +39,23 @@ namespace Day2
 
         static bool IsGamePossible(string cubesSet)
         {
-            const int RED_CUBES_MAX = 12, GREEN_CUBES_MAX = 13, BLUE_CUBES_MAX = 14;
+            var cubesMaxNumbers = new Dictionary<string, int>(3)
+            {
+                { "red", 12 },
+                { "green", 13},
+                { "blue", 14}
+            };
 
             foreach (var subset in cubesSet.Trim().Split(';'))
             {
                 var cubes = subset.Trim().Split(", ");
 
-                int redCubesNumber = GetNumberOfCubesByColor(cubes, "red").FirstOrDefault();
-                int greenCubesNumber = GetNumberOfCubesByColor(cubes, "green").FirstOrDefault();
-                int blueCubesNumber = GetNumberOfCubesByColor(cubes, "blue").FirstOrDefault();
-
-                if (redCubesNumber > RED_CUBES_MAX || greenCubesNumber > GREEN_CUBES_MAX || blueCubesNumber > BLUE_CUBES_MAX)
+                foreach (var color in cubesMaxNumbers.Keys)
                 {
-                    return false;
+                    int numberOfCubes = GetNumberOfCubesByColor(cubes, color).FirstOrDefault();
+
+                    if (numberOfCubes > cubesMaxNumbers[color])
+                        return false;
                 }
             }
 
@@ -62,11 +66,14 @@ namespace Day2
         {
             var cubes = cubesSet.Trim().Replace(';', ',').Split(", ");
 
-            int redCubesRequired = GetNumberOfCubesByColor(cubes, "red").Max();
-            int greenCubesRequired = GetNumberOfCubesByColor(cubes, "green").Max();
-            int blueCubesRequired = GetNumberOfCubesByColor(cubes, "blue").Max();
+            var colors = new List<string>(3)
+            {
+                "red",
+                "green",
+                "blue"
+            };
 
-            return redCubesRequired * greenCubesRequired * blueCubesRequired;
+            return colors.Select(c => GetNumberOfCubesByColor(cubes, c).Max()).Aggregate(1, (x, y) => x * y);
         }
 
         static IEnumerable<int> GetNumberOfCubesByColor(string[] cubes, string color)
