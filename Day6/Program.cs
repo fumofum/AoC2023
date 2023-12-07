@@ -18,29 +18,30 @@ namespace Day6
 
         static int Part1(string[] inputData)
         {
-            var time = inputData[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).Select(uint.Parse).ToArray();
-            var distance = inputData[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).Select(uint.Parse).ToArray();
+            var time = inputData[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).Select(int.Parse).ToArray();
+            var distance = inputData[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1).Select(int.Parse).ToArray();
 
             return Enumerable.Range(0, time.Length)
-                             .Select(i => GetWinningWays(time[i], distance[i]).Count())
+                             .Select(i => GetWinningWaysNum(time[i], distance[i]))
                              .Aggregate((x, y) => x * y);
         }
 
         static int Part2(string[] inputData)
         {
-            var time = ulong.Parse(string.Join("", inputData[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1)));
-            var distance = ulong.Parse(string.Join("", inputData[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1)));
+            var time = long.Parse(string.Join("", inputData[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1)));
+            var distance = long.Parse(string.Join("", inputData[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Skip(1)));
 
-            return GetWinningWays(time, distance).Count();
+            return GetWinningWaysNum(time, distance);
         }
 
-        static IEnumerable<uint> GetWinningWays(ulong timeLimit, ulong recordDistance)
+        static int GetWinningWaysNum(long timeLimit, long recordDistance)
         {
-            for(uint holdingButtonTime = 1; holdingButtonTime < timeLimit - 1; ++holdingButtonTime)
-            {
-                if(holdingButtonTime * (timeLimit - holdingButtonTime) > recordDistance)
-                    yield return holdingButtonTime;
-            }
+            long D = timeLimit * timeLimit - 4 * recordDistance;
+
+            var x1 = (long)Math.Floor((-timeLimit + Math.Sqrt(D)) / 2);
+            var x2 = (long)Math.Ceiling((-timeLimit - Math.Sqrt(D)) / 2);
+
+            return (int)(x1 - x2 + 1);
         }
     }
 }
